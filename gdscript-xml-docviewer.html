@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XML to HTML Converter</title>
+	<style>
+        #output {
+            border: 2px solid #000;
+            padding: 10px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+
+        .label {
+            font-weight: bold;
+            font-size: 1.5em; /* Larger font size for the label */
+            margin-top: 20px;
+        }
+
+        .button-container {
+            margin-top: 10px;
+        }
+    </style>
+	<script>
+        function processFile() {
+            const fileInput = document.getElementById('xmlFileInput');
+            const file = fileInput.files[0];
+            const xsltFile = document.getElementById('xsltFileInput').files[0];
+
+            if (file && xsltFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const xmlContent = e.target.result;
+                    const xsltReader = new FileReader();
+                    xsltReader.onload = function(e) {
+                        const xsltContent = e.target.result;
+                        transformXML(xmlContent, xsltContent);
+                    };
+                    xsltReader.readAsText(xsltFile);
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please select both XML and XSLT files.");
+            }
+        }
+
+        function transformXML(xmlContent, xsltContent) {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+            const xsltDoc = parser.parseFromString(xsltContent, 'text/xml');
+
+            const xsltProcessor = new XSLTProcessor();
+            xsltProcessor.importStylesheet(xsltDoc);
+
+            const resultDocument = xsltProcessor.transformToFragment(xmlDoc, document);
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('output').appendChild(resultDocument);
+        }
+    </script>
+</head>
+<body>
+    <h1>XML to HTML Converter</h1>
+    
+    <p>Select your XML file:</p>
+    <input type="file" id="xmlFileInput" accept=".xml">
+    
+    <p>Select your XSLT file:</p>
+    <input type="file" id="xsltFileInput" accept=".xsl, .xslt">
+
+    <div class="button-container">
+        <button onclick="processFile()">Transform</button>
+    </div>
+    
+    <div class="label">Documentation Viewer</div>
+    <div id="output">Results will appear here</div>
+</body>
+</html>
