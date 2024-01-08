@@ -3,7 +3,11 @@ a way to view gdscript documentation XML files outputted by the CLI --doctool --
 
 ![image](https://github.com/InfernalWAVE/gdscript-xml-docviewer/assets/48569884/2a2f84ff-72d5-4314-8073-64ca435f1229)
 
-tested with xsltransform.net
+# how to use
+- open html file in browser
+- upload xml file output by --doctool
+- upload xslt file in this repo
+- press transform
 
 # relevant godot docs
 - command line tutorial:
