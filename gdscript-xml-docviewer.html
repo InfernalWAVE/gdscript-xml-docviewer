@@ -2,76 +2,166 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>XML to HTML Converter</title>
-	<style>
-        #output {
-            border: 2px solid #000;
-            padding: 10px;
-            margin-top: 20px;
-            min-height: 100px;
-        }
+    <title>GDScript XML Docviewer</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        padding: 20px;
+    }
+    
+    #title, .label {
+        font-family: Arial, sans-serif; /* Changed to Arial to match the label */
+        color: #333; /* A standard dark gray for better readability */
+        text-align: center;
+        font-size: 2em; /* Adjust the size to your preference */
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .upload-area {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    .dynamic-iframe {
+        border: 2px solid #000;
+        width: 100%;
+        margin-top: 20px;
+        overflow: auto;
+        display: block;
+        min-height: 100px;
+    }
+    
+    #output {
+        padding: 10px;
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        min-height: 50px;
+        position: relative;
+    }
+    
+    #output-placeholder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: #999;
+    }
+    
+    .button-container button {
+        padding: 10px 20px;
+        font-size: 1em;
+        margin-top: 10px;
+        cursor: pointer;
+        background-color: #005A9C;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .button-container button:hover {
+        background-color: #003D73;
+    }
+</style>
 
-        .label {
-            font-weight: bold;
-            font-size: 1.5em; /* Larger font size for the label */
-            margin-top: 20px;
-        }
+</head>
+<body>
+    <h1 id="title">GDScript XML Docviewer</h1>
+    
+    <div class="upload-area">
+        <p>Select your XML files:</p>
+        <input type="file" id="xmlFileInput" accept=".xml" multiple>
+        
+        <p>Select your XSLT file:</p>
+        <input type="file" id="xsltFileInput" accept=".xsl, .xslt">
 
-        .button-container {
-            margin-top: 10px;
-        }
-    </style>
-	<script>
-        function processFile() {
-            const fileInput = document.getElementById('xmlFileInput');
-            const file = fileInput.files[0];
+        <div class="button-container">
+            <button onclick="processFiles()">Transform</button>
+        </div>
+    </div>
+    
+    <div class="label">Documentation Viewer</div>
+    <div id="output">
+        <div id="output-placeholder">Transformed files will be shown here.</div>
+    </div>
+
+    <script>
+        function processFiles() {
+            const xmlFiles = document.getElementById('xmlFileInput').files;
             const xsltFile = document.getElementById('xsltFileInput').files[0];
 
-            if (file && xsltFile) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const xmlContent = e.target.result;
-                    const xsltReader = new FileReader();
-                    xsltReader.onload = function(e) {
-                        const xsltContent = e.target.result;
-                        transformXML(xmlContent, xsltContent);
-                    };
-                    xsltReader.readAsText(xsltFile);
+            if (xmlFiles.length > 0 && xsltFile) {
+                const xsltReader = new FileReader();
+                xsltReader.onload = function(e) {
+                    const xsltContent = e.target.result;
+                    Array.from(xmlFiles).forEach(xmlFile => {
+                        processFile(xmlFile, xsltContent);
+                    });
                 };
-                reader.readAsText(file);
+                xsltReader.readAsText(xsltFile);
             } else {
-                alert("Please select both XML and XSLT files.");
+                alert("Please select XML files and an XSLT file.");
             }
         }
 
+        function processFile(xmlFile, xsltContent) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const xmlContent = e.target.result;
+                transformXML(xmlContent, xsltContent);
+            };
+            reader.readAsText(xmlFile);
+        }
+
         function transformXML(xmlContent, xsltContent) {
-            const parser = new DOMParser();
+            document.getElementById('output-placeholder').style.display = 'none';
+			
+			const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
             const xsltDoc = parser.parseFromString(xsltContent, 'text/xml');
 
             const xsltProcessor = new XSLTProcessor();
             xsltProcessor.importStylesheet(xsltDoc);
 
-            const resultDocument = xsltProcessor.transformToFragment(xmlDoc, document);
-            document.getElementById('output').innerHTML = '';
-            document.getElementById('output').appendChild(resultDocument);
+            const resultDocument = xsltProcessor.transformToDocument(xmlDoc);
+            const iframe = document.createElement('iframe');
+            iframe.className = 'dynamic-iframe';
+            document.getElementById('output').appendChild(iframe);
+
+            iframe.onload = function() {
+                // Adjust the height of the iframe based on its content
+                setTimeout(() => { // Timeout for content to render
+                    const body = iframe.contentWindow.document.body;
+                    const html = iframe.contentWindow.document.documentElement;
+                    const height = Math.max(body.scrollHeight, body.offsetHeight,
+                                           html.clientHeight, html.scrollHeight, html.offsetHeight);
+                    iframe.style.height = height + 'px';
+                    updateContainerHeight(); // Call to update the container height
+                }, 0);
+            };
+
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(new XMLSerializer().serializeToString(resultDocument));
+            iframe.contentWindow.document.close();
+        }
+
+        function updateContainerHeight() {
+            const outputDiv = document.getElementById('output');
+            const iframes = outputDiv.getElementsByTagName('iframe');
+            let newHeight = 0;
+            for (let iframe of iframes) {
+                newHeight += iframe.getBoundingClientRect().height;
+            }
+            // Account for any additional padding/margins
+            newHeight += (iframes.length * 20); // Example: 20px margin for each iframe
+            outputDiv.style.height = `${newHeight}px`;
         }
     </script>
-</head>
-<body>
-    <h1>XML to HTML Converter</h1>
-    
-    <p>Select your XML file:</p>
-    <input type="file" id="xmlFileInput" accept=".xml">
-    
-    <p>Select your XSLT file:</p>
-    <input type="file" id="xsltFileInput" accept=".xsl, .xslt">
-
-    <div class="button-container">
-        <button onclick="processFile()">Transform</button>
-    </div>
-    
-    <div class="label">Documentation Viewer</div>
-    <div id="output">Results will appear here</div>
 </body>
 </html>
