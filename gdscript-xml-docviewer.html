@@ -68,22 +68,63 @@
     .button-container button:hover {
         background-color: #003D73;
     }
+	
+    .file-drop-area {
+        border: 2px dotted #000; /* Dotted black border */
+        border-radius: 10px;
+        text-align: center;
+        padding: 20px;
+        color: #000; /* Black font color for better visibility */
+        margin-bottom: 20px;
+        transition: border-color 0.3s, color 0.3s;
+        background-color: #fff; /* Optional: white background */
+    }
+    
+    .file-drop-area.highlight {
+        border-color: #3A8EE6;
+        color: #3A8EE6;
+    }
+    
+    .file-drop-area input {
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+    }
+    
+    .file-drop-area label {
+        display: block;
+        cursor: pointer;
+        margin-bottom: 10px; /* Add some space above the file list */
+    }
+    
+    .file-list {
+        margin-top: 10px;
+        text-align: left;
+        color: #000; /* Ensure the file list text is also black */
+    }
 </style>
 
 </head>
 <body>
     <h1 id="title">GDScript XML Docviewer</h1>
     
-    <div class="upload-area">
-        <p>Select your XML files:</p>
+    <div id="xml-drop-area" class="file-drop-area">
         <input type="file" id="xmlFileInput" accept=".xml" multiple>
-        
-        <p>Select your XSLT file:</p>
+        <label for="xmlFileInput">Drag XML files here or click to upload</label>
+        <div id="xml-file-list" class="file-list"></div>
+    </div>
+    
+    <div id="xslt-drop-area" class="file-drop-area">
         <input type="file" id="xsltFileInput" accept=".xsl, .xslt">
+        <label for="xsltFileInput">Drag XSLT file here or click to upload</label>
+        <div id="xslt-file-list" class="file-list"></div>
+    </div>
 
-        <div class="button-container">
-            <button onclick="processFiles()">Transform</button>
-        </div>
+    <div class="button-container">
+        <button onclick="processFiles()">Transform</button>
     </div>
     
     <div class="label">Documentation Viewer</div>
@@ -92,7 +133,59 @@
     </div>
 
     <script>
-        function processFiles() {
+        function setupDragAndDrop() {
+            const dropAreas = document.querySelectorAll('.file-drop-area');
+
+            dropAreas.forEach(area => {
+                area.addEventListener('dragover', (event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = 'copy';
+                    area.classList.add('highlight');
+                });
+                
+                area.addEventListener('dragleave', (event) => {
+                    area.classList.remove('highlight');
+                });
+
+                area.addEventListener('drop', (event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    area.classList.remove('highlight');
+                    const files = event.dataTransfer.files;
+                    handleFiles(files, area);
+                });
+
+                area.addEventListener('click', () => {
+                    area.querySelector('input').click();
+                });
+
+                area.querySelector('input').addEventListener('change', (event) => {
+                    const files = event.target.files;
+                    handleFiles(files, area);
+                });
+            });
+        }
+
+        function handleFiles(files, area) {
+            let fileList = area.getElementsByClassName('file-list')[0];
+            fileList.innerHTML = ''; // Clear the list
+            
+            Array.from(files).forEach(file => {
+                let fileItem = document.createElement('div');
+                fileItem.textContent = file.name;
+                fileList.appendChild(fileItem);
+            });
+			if (area.id === 'xml-drop-area') {
+                document.getElementById('xmlFileInput').files = files;
+            } else if (area.id === 'xslt-drop-area') {
+                document.getElementById('xsltFileInput').files = files;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', setupDragAndDrop);
+		
+		function processFiles() {
             const xmlFiles = document.getElementById('xmlFileInput').files;
             const xsltFile = document.getElementById('xsltFileInput').files[0];
 
