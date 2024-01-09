@@ -8,7 +8,7 @@ a way to view gdscript documentation XML files outputted by the CLI --doctool --
 - upload xml files output by --doctool
 - upload xslt file in this repo
 - press Process Files
-- to export output, press Export HTML
+- to export output, press Export HTML/PDF
 
 # relevant godot docs
 - command line tutorial:
