@@ -107,12 +107,15 @@
 
     <button onclick="processFiles()">Process Files</button>
 	<button onclick="exportAsHTML()">Export as HTML</button>
+	<button onclick="exportAsPDF()">Export as PDF</button>
 
     <h2>Output</h2>
     <div id="output">
         <div id="output-placeholder">Output will be displayed here</div>
     </div>
-
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

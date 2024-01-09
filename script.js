@@ -169,6 +169,31 @@ function exportAsHTML() {
     URL.revokeObjectURL(url);
 }
 
+function exportAsPDF() {
+    // Get the CSS from the main document
+    var cssStyles = document.querySelector('style').textContent;
+
+    // Get the content and inline styles from the iframes
+    var iframeContents = Array.from(document.querySelectorAll('.dynamic-iframe')).map(function(iframe) {
+        var styleContent = Array.from(iframe.contentDocument.querySelectorAll('style')).map(style => style.textContent).join(' ');
+        var bodyContent = iframe.contentDocument.body.innerHTML;
+        return `<style>${styleContent}</style>${bodyContent}`;
+    }).join('');
+
+    // Construct a full HTML string with all styles and contents
+    var fullHtmlContent = `<div><style>${cssStyles}</style>${iframeContents}</div>`;
+
+    // Use html2pdf to convert the HTML content to a PDF
+    html2pdf().from(fullHtmlContent).set({
+        margin: 1,
+        filename: 'document.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).save();
+}
+
+
 
 
 
