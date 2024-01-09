@@ -19,7 +19,7 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_doc
 
 # relevant godot source
 - godot/doc/classes
- - this tool works with the godot engine class references linked below!
+  - this tool works with the godot engine class references linked below!
 https://github.com/godotengine/godot/tree/master/doc/classes
 
 # NOTE
