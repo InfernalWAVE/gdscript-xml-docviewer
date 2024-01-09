@@ -30,7 +30,11 @@
                 </style>
             </head>
             <body>
-                <h2>Filename: <xsl:value-of select="class/@name"/></h2>
+                <h2>Filename: <xsl:value-of select="translate(class/@name, '&quot;', '')"/></h2>
+                <!-- Added section for 'inherits', without quotation marks -->
+                <xsl:if test="class/@inherits">
+                    <h3>Inherits: <xsl:value-of select="translate(class/@inherits, '&quot;', '')"/></h3>
+                </xsl:if>
                 <h3>Brief Description</h3>
                 <p><xsl:value-of select="class/brief_description"/></p>
                 <h3>Description</h3>
