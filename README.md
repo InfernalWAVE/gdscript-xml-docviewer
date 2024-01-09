@@ -1,7 +1,7 @@
 # gdscript-xml-docviewer
 a way to view gdscript documentation XML files outputted by the CLI --doctool --gdscript-docs in Godot. Renders as HTML in browser using an XSLT file. Supports multiple XML files at once. Supports HTML and PDF export.
 
-![image](https://github.com/InfernalWAVE/gdscript-xml-docviewer/assets/48569884/98aed327-22b6-4855-ab52-37e328a01926)
+![image](https://github.com/InfernalWAVE/gdscript-xml-docviewer/assets/48569884/ca823d17-427b-4617-8dff-9439325e0732)
 
 # how to use
 - open html file in browser
