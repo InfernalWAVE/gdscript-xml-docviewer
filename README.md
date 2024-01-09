@@ -24,4 +24,4 @@ https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_doc
 https://github.com/godotengine/godot/tree/master/doc/classes
 
 # NOTE
-gdscript documentation comments support documenting several more features than what the xslt file handles at this time. right now it captures documentation for the script, member variables, and member functions. this is why I made the xslt uploadable rather than built-in. it is easily editable/upgradable!
+gdscript documentation comments support documenting several more features than what the xslt file handles at this time. right now it captures descriptions for the script, inheritance, member variables, and member functions. this is why I made the xslt uploadable rather than built-in. it is easily editable/upgradable!
