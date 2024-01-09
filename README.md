@@ -18,4 +18,4 @@ https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.ht
 https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html
 
 # NOTE
-gdscript documentation comments support documenting several more features than what the xslt file handles at this time. right now it captures documentation for the script, member variables, and member functions. this is why I make the xslt uploadable rather than built-in though. it is easily editable/upgradable!
+gdscript documentation comments support documenting several more features than what the xslt file handles at this time. right now it captures documentation for the script, member variables, and member functions. this is why I made the xslt uploadable rather than built-in. it is easily editable/upgradable!
