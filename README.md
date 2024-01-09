@@ -17,5 +17,10 @@ https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.ht
 - gdscript documentation comments:
 https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html
 
+# relevant godot source
+- godot/doc/classes
+- - this tool works with the godot engine class references linked below!
+https://github.com/godotengine/godot/tree/master/doc/classes
+
 # NOTE
 gdscript documentation comments support documenting several more features than what the xslt file handles at this time. right now it captures documentation for the script, member variables, and member functions. this is why I made the xslt uploadable rather than built-in. it is easily editable/upgradable!
