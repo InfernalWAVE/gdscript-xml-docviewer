@@ -30,7 +30,6 @@
                 </style>
             </head>
             <body>
-                <h1>Class Documentation</h1>
                 <h2>Filename: <xsl:value-of select="class/@name"/></h2>
                 <h3>Brief Description</h3>
                 <p><xsl:value-of select="class/brief_description"/></p>
